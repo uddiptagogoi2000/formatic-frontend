@@ -1,4 +1,7 @@
 import { useReducer, useRef } from "react";
+import withConfig from "../../hoc/withConfig";
+import { ElementPropertiesByCategory } from "../../../contexts/formContext";
+import "./styles.css";
 
 function len(text: string) {
   return text.length;
@@ -43,7 +46,21 @@ function reducer(state: State, action: Action): State {
   return state;
 }
 
-const HeadingElement = () => {
+type ElementProps = {
+  elementProperties: ElementPropertiesByCategory;
+};
+
+export enum Category {
+  GENERAL = "general",
+}
+
+export enum States {
+  HEADING_TEXT = "headingText",
+  SUBHEADING_TEXT = "subheadingText",
+  HEADING_SIZE = "headingSize",
+}
+
+const HeadingElement = ({ elementProperties }: ElementProps) => {
   // todo: make it rich text editable
 
   const contentEditableDivRef = useRef(null);
@@ -56,14 +73,21 @@ const HeadingElement = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { isHeadingEmpty, isSubHeadingEmpty } = state;
 
-  const defaultHeadingText = "Heading";
+  // elementProperties[GENERAL].states[HEADING_TEXT]
+  // elementProperties[GENERAL].states[SUBHEADING_TEXT]
+  // elementProperties[GENERAL].states[HEADING_SIZE]
+
+  const { GENERAL } = Category;
+  const { HEADING_TEXT, SUBHEADING_TEXT } = States;
 
   return (
-    <div ref={contentEditableDivRef}>
+    <div ref={contentEditableDivRef} className='heading-element'>
       <h2
         contentEditable='plaintext-only'
         suppressContentEditableWarning
-        className={`editable ${isHeadingEmpty ? "inlineEditEmpty" : ""}`}
+        className={`heading-element__heading editable ${
+          isHeadingEmpty ? "inlineEditEmpty" : ""
+        }`}
         data-placeholder='Type a header'
         onInput={(e) => {
           const target = e.target as HTMLElement;
@@ -76,12 +100,14 @@ const HeadingElement = () => {
           });
         }}
       >
-        {defaultHeadingText}
+        {elementProperties[GENERAL].states[HEADING_TEXT]}
       </h2>
       <div
         contentEditable='plaintext-only'
         suppressContentEditableWarning
-        className={`editable ${isSubHeadingEmpty ? "inlineEditEmpty" : ""}`}
+        className={`heading-element__subheading editable ${
+          isSubHeadingEmpty ? "inlineEditEmpty" : ""
+        }`}
         data-placeholder='Type a subheader'
         onInput={(e) => {
           const target = e.target as HTMLElement;
@@ -93,9 +119,11 @@ const HeadingElement = () => {
             },
           });
         }}
-      ></div>
+      >
+        {elementProperties[GENERAL].states[SUBHEADING_TEXT]}
+      </div>
     </div>
   );
 };
 
-export { HeadingElement };
+export default withConfig(HeadingElement);
