@@ -53,6 +53,13 @@
   .builder-layout__form-container {
     flex: 4;
     padding: 1rem 2rem;
+    background-color: snow;
+
+    .builder-layout__form-container__form {
+      max-width: 750px;
+      padding: 1.5rem 2.5rem;
+      box-shadow: 0 4px 4px rgba(87, 100, 126, 0.21);
+    }
   }
 
   .builder-layout__prop-container {
