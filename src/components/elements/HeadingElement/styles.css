@@ -1,3 +1,7 @@
+.element {
+  padding: 0.5rem 0.75rem;
+}
+
 .heading-element {
   .heading-element__heading {
     margin: 0.5rem 0;

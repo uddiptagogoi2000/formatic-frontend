@@ -1,7 +1,7 @@
-import { useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import withConfig from "../../hoc/withConfig";
-import { ElementPropertiesByCategory } from "../../../contexts/formContext";
 import "./styles.css";
+import { Element as ElementDetails } from "../../../contexts/apptypes";
 
 function len(text: string) {
   return text.length;
@@ -46,9 +46,10 @@ function reducer(state: State, action: Action): State {
   return state;
 }
 
-type ElementProps = {
-  elementProperties: ElementPropertiesByCategory;
-};
+// type ElementProps = {
+//   elementProperties: ElementPropertiesByCategory;
+//   // updateElement: () => void; or get it from formContext
+// };
 
 export enum Category {
   GENERAL = "general",
@@ -60,10 +61,39 @@ export enum States {
   HEADING_SIZE = "headingSize",
 }
 
-const HeadingElement = ({ elementProperties }: ElementProps) => {
+type HeadingElementProps = {
+  elementDetails: ElementDetails;
+  isSelected: boolean;
+};
+
+const useHeadingElementValues = (details: ElementDetails) => {
+  let headingText = "Heading";
+  let subHeadingText = "";
+
+  details.properties.forEach((property) => {
+    if (property.name === "Heading Text" && property.type === "text") {
+      // todo: make the strings Variables or Enums
+      headingText = property.value;
+    }
+
+    if (property.name === "Subheading Text" && property.type === "text") {
+      subHeadingText = property.value;
+    }
+  });
+
+  return { headingText, subHeadingText };
+};
+
+const HeadingElement = ({
+  elementDetails,
+  isSelected,
+}: HeadingElementProps) => {
   // todo: make it rich text editable
 
   const contentEditableDivRef = useRef(null);
+  const headingTextRef = useRef(null);
+  const subHeadingTextRef = useRef(null);
+  // dummy: const updateElement = useContext(formContext)
 
   const initialState: State = {
     [IS_HEADING_EMPTY]: false,
@@ -72,17 +102,52 @@ const HeadingElement = ({ elementProperties }: ElementProps) => {
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const { isHeadingEmpty, isSubHeadingEmpty } = state;
+  const { headingText, subHeadingText } =
+    useHeadingElementValues(elementDetails);
 
   // elementProperties[GENERAL].states[HEADING_TEXT]
   // elementProperties[GENERAL].states[SUBHEADING_TEXT]
   // elementProperties[GENERAL].states[HEADING_SIZE]
+  /* {elementProperties[GENERAL].states[HEADING_TEXT]} */
+  // const { HEADING_TEXT, SUBHEADING_TEXT } = States;
 
-  const { GENERAL } = Category;
-  const { HEADING_TEXT, SUBHEADING_TEXT } = States;
+  // let defaultHeadingText = "Heading";
+  // let defaultSubHeadingText = "Subheading";
+
+  // elementDetails.properties.forEach((property) => {
+  //   if (property.name === "Heading Text" && property.type === "text") {
+  //     defaultHeadingText = property.value;
+  //   }
+
+  //   if (property.name === "Subheading Text" && property.type === "text") {
+  //     defaultSubHeadingText = property.value;
+  //   }
+  // });
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (headingTextRef.current !== event.target) {
+        console.log("You clicked outside");
+      }
+    }
+
+    if (isSelected) {
+      document.addEventListener("click", handleClickOutside);
+    }
+
+    () => {
+      document.removeEventListener("click", handleClickOutside);
+
+      // Update the element in the form context
+      // send innertext of heading and subheading to the form context by calling updateElement
+    };
+  }, [isSelected]);
 
   return (
-    <div ref={contentEditableDivRef} className='heading-element'>
+    <div ref={contentEditableDivRef} className='heading-element element'>
       <h2
+        spellCheck='false'
+        ref={headingTextRef}
         contentEditable='plaintext-only'
         suppressContentEditableWarning
         className={`heading-element__heading editable ${
@@ -100,9 +165,11 @@ const HeadingElement = ({ elementProperties }: ElementProps) => {
           });
         }}
       >
-        {elementProperties[GENERAL].states[HEADING_TEXT]}
+        {headingText}
       </h2>
       <div
+        spellCheck='false'
+        ref={subHeadingTextRef}
         contentEditable='plaintext-only'
         suppressContentEditableWarning
         className={`heading-element__subheading editable ${
@@ -120,7 +187,7 @@ const HeadingElement = ({ elementProperties }: ElementProps) => {
           });
         }}
       >
-        {elementProperties[GENERAL].states[SUBHEADING_TEXT]}
+        {subHeadingText}
       </div>
     </div>
   );
