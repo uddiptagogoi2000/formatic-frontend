@@ -1,9 +1,31 @@
 .element {
   padding: 0.5rem 0.75rem;
+  color: var(--dark);
 }
 
 .heading-element {
+  input[type="text"] {
+    border: none;
+    background-color: transparent;
+    outline: none;
+    color: inherit;
+  }
+
   .heading-element__heading {
     margin: 0.5rem 0;
+
+    input[type="text"] {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+  }
+
+  .heading-element__subheading {
+    margin: 0.5rem 0;
+
+    input[type="text"] {
+      font-size: 1rem;
+      font-weight: 400;
+    }
   }
 }
