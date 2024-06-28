@@ -122,28 +122,39 @@ function formReducer(state: FormState, action: FormAction) {
       const { pageId, elementId, property } =
         action.payload as UpdateElementAction["payload"];
 
-      const updatedForm = { ...state.form };
-
-      const page = updatedForm.pages.find((page) => page.id === pageId);
-      if (!page) {
-        return state;
-      }
-
-      const element = page.elements.find((element) => element.id === elementId);
-      if (!element) {
-        return state;
-      }
-
-      const updatedElement = { ...element };
-
-      updatedElement.properties = updatedElement.properties.map((prop) => {
-        if (prop.id === property.id) {
-          return property;
-        }
-        return prop;
+      console.log("called update element", {
+        elementId,
+        property,
       });
 
-      return state;
+      return {
+        ...state,
+        form: {
+          ...state.form,
+          pages: state.form.pages.map((page) => {
+            if (page.id === pageId) {
+              return {
+                ...page,
+                elements: page.elements.map((element) => {
+                  if (element.id === elementId) {
+                    return {
+                      ...element,
+                      properties: element.properties.map((prop) => {
+                        if (prop.id === property.id) {
+                          return property;
+                        }
+                        return prop;
+                      }),
+                    };
+                  }
+                  return element;
+                }),
+              };
+            }
+            return page;
+          }),
+        },
+      };
     }
 
     case "SELECT_ELEMENT": {
@@ -189,7 +200,7 @@ const initialFormState: FormState = {
         elements: [
           {
             id: 1,
-            name: "Element",
+            name: "Element 1",
             pageId: 1,
             createdAt: "",
             updatedAt: "",
@@ -200,7 +211,7 @@ const initialFormState: FormState = {
                 id: 1,
                 name: "Heading Text",
                 type: "text",
-                value: "Heading2",
+                value: "Heading 1",
               },
               {
                 category: "general",
@@ -217,6 +228,30 @@ const initialFormState: FormState = {
               //   value: "default",
               //   options: ["default", "large", "small"],
               // }
+            ],
+          },
+          {
+            id: 2,
+            name: "Element 2",
+            pageId: 1,
+            createdAt: "",
+            updatedAt: "",
+            order: 2,
+            properties: [
+              {
+                category: "general",
+                id: 1,
+                name: "Heading Text",
+                type: "text",
+                value: "Heading 2",
+              },
+              {
+                category: "general",
+                id: 2,
+                name: "Subheading Text",
+                type: "text",
+                value: "",
+              },
             ],
           },
         ],
