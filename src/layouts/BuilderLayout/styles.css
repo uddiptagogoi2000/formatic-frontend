@@ -64,6 +64,20 @@
 
   .builder-layout__prop-container {
     flex: 2;
+
+    .builder-layout__prop-container__header {
+      padding: 1rem;
+    }
+
+    .builder-layout__prop-container__list {
+      /* todo */
+      overflow-y: auto;
+      /* todo */
+      .builder-layout__prop-container__list__item
+        + .builder-layout__prop-container__list__item {
+        border-top: 1px solid var(--medium);
+      }
+    }
   }
 
   .builder-layout__elem-container,
@@ -74,13 +88,41 @@
 }
 
 .editable {
+  /* --value: attr(data-value); */
+
   &:focus-within {
     outline: none;
   }
+
+  /* &:not(var(--value)) {
+    &::after {
+      content: attr(data-placeholder);
+      opacity: 0.5;
+      color: inherit;
+    }
+  } */
 
   &.inlineEditEmpty::after {
     content: attr(data-placeholder);
     opacity: 0.5;
     color: inherit;
   }
+}
+
+.property,
+.property--text {
+  input[type="text"] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--medium);
+    border-radius: 5px;
+    font-size: inherit;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
 }

@@ -123,7 +123,7 @@ interface BaseProperty {
   category: string;
 }
 
-interface TextProperty extends BaseProperty {
+export interface TextProperty extends BaseProperty {
   type: "text";
   value: string;
 }

@@ -1,4 +1,5 @@
 import HeadingElement from "../../components/elements/HeadingElement";
+import { Element, Property } from "../../contexts/apptypes";
 import {
   FormContextProvider,
   useFormContext,
@@ -27,18 +28,22 @@ const FormContainer = () => {
 };
 
 const PropertiesContainer = () => {
-  const { state } = useFormContext();
+  const { state, onUpdateElement } = useFormContext();
 
-  function findElementById(elementId: number) {
+  function findElementById(elementId: number): Element | undefined {
     return state.form.pages
       .flatMap((page) => page.elements)
       .find((element) => element.id === elementId);
   }
 
-  let properties = null;
-  let element = null;
+  let properties: Property[] | undefined = undefined;
+  let element: Element | undefined;
+
   if (state.selectedElementId !== null) {
     element = findElementById(state.selectedElementId);
+    if (!element) {
+      throw new Error("Element not found");
+    }
     properties = element?.properties;
   }
 
@@ -46,26 +51,46 @@ const PropertiesContainer = () => {
 
   return (
     <div className='builder-layout__prop-container'>
-      <div>
+      <div className='builder-layout__prop-container__header'>
         {properties == null
           ? "No properties to display"
           : `${element?.name} Properties`}
       </div>
-      <div>
-        {properties == null
+      <ul className='builder-layout__prop-container__list'>
+        {element == null || properties == null
           ? noPropertiesDisplay
-          : properties.map((property) => {
+          : properties.map((property, index) => {
+              let item: JSX.Element;
+
               switch (property.type) {
-                case "text":
-                  return (
-                    <div key={property.id}>
-                      <div>{property.name}</div>
-                      <div>{property.value}</div>
+                case "text": {
+                  item = (
+                    <div
+                      key={property.id}
+                      className='property--text form-group'
+                    >
+                      <label htmlFor={`${property.id}`}>{property.name}</label>
+                      <input
+                        type='text'
+                        id={`${property.id}`}
+                        value={property.value}
+                        onChange={(e) => {
+                          const pageId = element.pageId;
+                          const elementId = element.id;
+
+                          onUpdateElement(pageId, elementId, {
+                            ...property,
+                            value: e.target.value,
+                          });
+                        }}
+                      />
                     </div>
                   );
+                  break;
+                }
 
                 case "text-group": {
-                  return (
+                  item = (
                     <div key={property.id}>
                       <div>{property.name}</div>
                       {property.fields.map((field) => (
@@ -76,14 +101,24 @@ const PropertiesContainer = () => {
                       ))}
                     </div>
                   );
+                  break;
                 }
 
                 default: {
                   throw new Error("Unknown property type");
                 }
               }
+
+              return (
+                <li
+                  className='builder-layout__prop-container__list__item'
+                  key={index}
+                >
+                  {item}
+                </li>
+              );
             })}
-      </div>
+      </ul>
     </div>
   );
 };
