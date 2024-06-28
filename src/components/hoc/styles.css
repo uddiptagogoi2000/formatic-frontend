@@ -1,5 +1,5 @@
 .element-wrapper {
-  --duration: 0.3s;
+  --duration: 0.2s;
   --blue: #0075e3;
   --shadow-width: 2px;
 
@@ -32,4 +32,12 @@
       border-radius: 999999px;
     }
   }
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.visible {
+  visibility: visible;
 }

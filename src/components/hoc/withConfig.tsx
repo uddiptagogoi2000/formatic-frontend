@@ -57,7 +57,11 @@ const withConfig = <P extends object>(
         }`}
         onClick={() => handleSelect(props.elementDetails.id)}
       >
-        <div className='element-wrapper__config-button-group'>
+        <div
+          className={`element-wrapper__config-button-group ${
+            isSelected ? "visible" : "invisible"
+          } `}
+        >
           <button onClick={handleOpenSettingsPanel}>Settings</button>
           <button>Remove</button>
         </div>
