@@ -184,6 +184,8 @@ const HeadingElement = ({
     //     value: headingTextState,
     //   });
     // }
+    console.log("clicked");
+
     if (headingTextRef.current !== event.target && isSelected) {
       console.log(
         "You clicked outside, here we are",
@@ -219,38 +221,41 @@ const HeadingElement = ({
   useEffect(() => {
     if (isSelected) {
       console.log("adding event listener of ", elementDetails.id);
-      document.addEventListener("click", handleClickOutside);
+      document.addEventListener("click", handleClickOutside, true);
     }
 
     return () => {
       console.log("removing event listener of ", elementDetails.id);
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("click", handleClickOutside, true);
 
-      const elementId = elementDetails.id;
-      const pageId = elementDetails.pageId;
+      // No need if I set capture to true
 
-      if (isSelected) {
-        onUpdateElement(pageId, elementId, {
-          ...headingTextProperty,
-          value: headingTextValueRef.current,
-        });
-        onUpdateElement(pageId, elementId, {
-          ...subHeadingTextProperty,
-          value: subHeadingTextValueRef.current,
-        });
-      }
+      // const elementId = elementDetails.id;
+      // const pageId = elementDetails.pageId;
+
+      // if (isSelected) {
+      //   onUpdateElement(pageId, elementId, {
+      //     ...headingTextProperty,
+      //     value: headingTextValueRef.current,
+      //   });
+      //   onUpdateElement(pageId, elementId, {
+      //     ...subHeadingTextProperty,
+      //     value: subHeadingTextValueRef.current,
+      //   });
+      // }
     };
   }, [isSelected]);
 
   useEffect(() => {
     if (isSelected) {
       console.log("adding event listener for when typing", elementDetails.id);
-      document.addEventListener("click", handleClickOutside);
+      document.addEventListener("click", handleClickOutside, true);
     }
 
     return () => {
       console.log("removing event listener for when typing", elementDetails.id);
-      document.removeEventListener("click", handleClickOutside);
+
+      document.removeEventListener("click", handleClickOutside, true);
     };
   }, [isSelected, headingTextState, subHeadingTextState]);
 
@@ -258,36 +263,6 @@ const HeadingElement = ({
     setHeadingTextState(headingTextProperty.value);
     setSubHeadingTextState(subHeadingTextProperty.value);
   }, [subHeadingTextProperty.value, headingTextProperty.value]);
-
-  // useEffect(() => {
-  //   dispatch({
-  //     type: "input_changed",
-  //     payload: {
-  //       innerText: headingText,
-  //       prop: IS_HEADING_EMPTY,
-  //     },
-  //   });
-  // }, [headingText]);
-
-  // useEffect(() => {
-  //   dispatch({
-  //     type: "input_changed",
-  //     payload: {
-  //       innerText: subHeadingText,
-  //       prop: IS_SUBHEADING_EMPTY,
-  //     },
-  //   });
-  // }, [subHeadingText]);
-
-  // useEffect(() => {
-  //   if (subHeadingTextRef.current !== null) {
-  //     const subHeadingTextElement = subHeadingTextRef.current as HTMLElement;
-
-  //     subHeadingTextElement.innerText = subHeadingText;
-  //   }
-  // }, [subHeadingText]);
-
-  // console.log("rendering", elementDetails.properties);
 
   return (
     <div ref={contentEditableDivRef} className='heading-element element'>
